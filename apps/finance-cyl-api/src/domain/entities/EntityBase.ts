@@ -1,6 +1,5 @@
 import { ValidationError } from '@application/errors';
 import { isValidDate } from '@shared/utils';
-import { RequestContextDto } from '@cyl-app/dto';
 
 interface IEntity {
   id: string;
@@ -11,26 +10,20 @@ type TypeSettersDictionary<T> = Record<keyof T, Function>;
 
 export interface IEntityBase {
   id: string;
-  createdBy: string;
   createdAt?: Date;
-  updatedBy: string | null;
   updatedAt: Date | null;
   active?: boolean;
 }
 
 export abstract class EntityBase {
   readonly id: string;
-  readonly createdBy: string;
   readonly createdAt: Date;
   readonly active: boolean;
-  protected updatedBy: string | null;
   protected updatedAt: Date | null;
 
   protected constructor(props: IEntityBase) {
     this.id = props.id;
-    this.createdBy = props.createdBy;
     this.createdAt = props.createdAt || new Date();
-    this.updatedBy = props.updatedBy;
     this.updatedAt = props.updatedAt;
     this.active = props.active ?? true;
   }
@@ -38,10 +31,6 @@ export abstract class EntityBase {
   abstract validate(): void;
 
   /* #region Getters */
-
-  public getUpdatedBy(): string | null {
-    return this.updatedBy;
-  }
 
   public getUpdatedAt(): Date | null {
     return this.updatedAt;
@@ -146,17 +135,19 @@ export abstract class EntityBase {
     ((<unknown>this) as Record<string, T | null>)[field] = relation;
   }
 
-  protected setUpdated({ user }: RequestContextDto) {
+  protected setActive(active: boolean): void {
+    this.setBoolean(active, 'active');
+  }
+
+  protected setUpdated() {
     this.updatedAt = new Date();
-    this.updatedBy = user.id;
   }
 
   /* #endregion */
 
   protected applyChanges<T extends object>(
     entity: T,
-    settersDictionary: TypeSettersDictionary<T>,
-    contextParams: RequestContextDto
+    settersDictionary: TypeSettersDictionary<T>
   ) {
     Object.entries(entity).forEach(([key, value]) => {
       if (
@@ -164,10 +155,10 @@ export abstract class EntityBase {
         settersDictionary[key as keyof T] !== undefined &&
         value !== undefined
       ) {
-        settersDictionary[key as keyof T].bind(this)(value, contextParams);
+        settersDictionary[key as keyof T].bind(this)(value);
       }
     });
-    this.setUpdated(contextParams);
+    this.setUpdated();
   }
 
   public isSame(entity: EntityBase): boolean {

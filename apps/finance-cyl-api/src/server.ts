@@ -1,6 +1,7 @@
 import app from './app';
 import { Logger } from '@infra/logging';
 import env from '@infra/config/env';
+import { initializeConnection } from '@infra/data/DatabaseConnection';
 
 const serverPort = String(env.SERVER_PORT);
 
@@ -8,6 +9,8 @@ async function startServer() {
   Logger.debug('🚧 Server is starting');
 
   try {
+    await initializeConnection();
+
     app.listen(serverPort, () => {
       Logger.systemStarted(serverPort);
     });

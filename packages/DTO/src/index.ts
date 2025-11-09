@@ -1,5 +1,7 @@
 export * from './Controllers';
 export * from './RequestContext';
+export * from './Income';
+export * from './Expense';
 
 export * from './Pagination';
 export * from './PaginationOptions';

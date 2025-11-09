@@ -9,6 +9,13 @@ config({
 const envSchema = z.object({
   SERVER_PORT: z.coerce.number().default(3333),
   NODE_ENV: z.enum(['production', 'staging', 'development', 'test']),
+
+  DB_USERNAME: z.string(),
+  DB_PASSWORD: z.string(),
+  DB_HOST: z.string().default('localhost'),
+  DB_PORT: z.coerce.number().default(5432),
+  DB_NAME: z.string(),
+  DB_CA: z.string().optional().nullable().default(null),
 });
 
 let env: z.infer<typeof envSchema>;

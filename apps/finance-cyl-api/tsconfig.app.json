@@ -14,14 +14,14 @@
       "@application/*": ["./src/application/*"],
       "@infra/*": ["./src/infra/*"],
       "@interfaces/*": ["./src/domain/interfaces/*"],
-      "@models/*": ["./src/domain/models/*"],
+      "@models/*": ["src/domain/entities/*"],
       "@services/*": ["./src/domain/services/*"],
       "@shared/*": ["./src/shared/*"],
 
       "@application": ["./src/application"],
       "@infra": ["./src/infra"],
       "@interfaces": ["./src/domain/interfaces"],
-      "@models": ["./src/domain/models"],
+      "@models": ["src/domain/entities"],
       "@repositories": ["./src/infra/data/repositories"],
       "@services": ["./src/domain/services"]
     }
