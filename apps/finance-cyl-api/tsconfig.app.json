@@ -1,0 +1,36 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "types": ["node", "express"],
+    "rootDir": "src",
+    "baseUrl": "./",
+    "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@application/*": ["./src/application/*"],
+      "@infra/*": ["./src/infra/*"],
+      "@interfaces/*": ["./src/domain/interfaces/*"],
+      "@models/*": ["./src/domain/models/*"],
+      "@services/*": ["./src/domain/services/*"],
+      "@shared/*": ["./src/shared/*"],
+
+      "@application": ["./src/application"],
+      "@infra": ["./src/infra"],
+      "@interfaces": ["./src/domain/interfaces"],
+      "@models": ["./src/domain/models"],
+      "@repositories": ["./src/infra/data/repositories"],
+      "@services": ["./src/domain/services"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["eslint.config.js", "eslint.config.cjs", "eslint.config.mjs"],
+  "references": [
+    {
+      "path": "../../packages/DTO"
+    }
+  ]
+}

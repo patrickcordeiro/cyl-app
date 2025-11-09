@@ -1,0 +1,13 @@
+node_modules
+dist
+public/uploads/*
+!public/uploads/.gitkeep
+coverage
+.env
+.env.test
+.env.homolog
+*.log
+.docker-data
+*.orig
+*.mwb.bak
+.idea
