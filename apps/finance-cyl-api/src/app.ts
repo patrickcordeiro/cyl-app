@@ -9,6 +9,7 @@ import {
   loggerMiddleware,
 } from '@application/middlewares';
 import env from '@infra/config/env';
+import { incomeRouter } from '@application/controllers/Income/routes';
 
 function ensureHelmet(h: typeof helmet) {
   if (env.NODE_ENV === 'development') {
@@ -39,6 +40,10 @@ app.get('/health', (req, res) => {
     data: { status: 'OK', timestamp: new Date().toISOString() },
   });
 });
+
+const { basePath, router } = incomeRouter;
+
+app.use(basePath, router);
 
 app.use(errorMiddleware());
 

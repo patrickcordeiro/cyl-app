@@ -1,12 +1,13 @@
 import { injectable } from 'inversify';
 import { DataSource } from 'typeorm';
+import { DatabaseFinanceConnection } from '../DatabaseConnection';
 
 @injectable()
 export class BaseRepository {
   private connection: DataSource;
 
-  constructor(connection: DataSource) {
-    this.connection = connection;
+  constructor() {
+    this.connection = DatabaseFinanceConnection;
   }
 
   protected getConnection(): DataSource {

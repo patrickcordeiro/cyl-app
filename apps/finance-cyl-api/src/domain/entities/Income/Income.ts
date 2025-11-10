@@ -3,7 +3,7 @@ import { EntityBase, IEntityBase } from 'src/domain/entities/EntityBase';
 import { validateObject } from '@shared/utils';
 
 export interface IIncome extends IEntityBase {
-  id: string;
+  id?: string;
   name: string;
   expectedDate: Date;
   receiptDate: Date | null;

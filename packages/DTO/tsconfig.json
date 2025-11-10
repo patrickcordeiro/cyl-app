@@ -24,7 +24,7 @@
     "baseUrl": "./",
     "typeRoots": ["./node_modules"],
     "paths": {
-      "#/*": ["src/*"]
+      "@/*": ["src/*"]
     }
   },
   "include": ["src/**/*"]

@@ -1,5 +1,6 @@
 import { ValidationError } from '@application/errors';
 import { isValidDate } from '@shared/utils';
+import { v4 as uuidv4 } from 'uuid';
 
 interface IEntity {
   id: string;
@@ -9,7 +10,7 @@ interface IEntity {
 type TypeSettersDictionary<T> = Record<keyof T, Function>;
 
 export interface IEntityBase {
-  id: string;
+  id?: string;
   createdAt?: Date;
   updatedAt: Date | null;
   active?: boolean;
@@ -22,7 +23,7 @@ export abstract class EntityBase {
   protected updatedAt: Date | null;
 
   protected constructor(props: IEntityBase) {
-    this.id = props.id;
+    this.id = props.id || uuidv4();
     this.createdAt = props.createdAt || new Date();
     this.updatedAt = props.updatedAt;
     this.active = props.active ?? true;

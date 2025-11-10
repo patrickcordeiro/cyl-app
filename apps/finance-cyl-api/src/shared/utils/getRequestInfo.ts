@@ -6,7 +6,7 @@ import { RequestContextDto, SearchOptionsDto } from '@cyl-app/dto';
 export type RequestInfo<T> = {
   params: Record<string, string>;
   body: T;
-  contextParams: RequestContextDto;
+  contextParams: RequestContextDto | undefined;
   query: SearchOptionsDto;
 };
 
@@ -20,9 +20,9 @@ export function getRequestInfo<T extends z.ZodSchema = any>(
   };
   let data = body;
 
-  if (!contextParams) {
-    throw new UnauthorizedError('User is not logged in');
-  }
+  // if (!contextParams) {
+  // throw new UnauthorizedError('User is not logged in');
+  // }
 
   if (schema) {
     const parsed = schema.safeParse(body);
