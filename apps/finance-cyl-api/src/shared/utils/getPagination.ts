@@ -1,51 +1,35 @@
-import { Pagination, PaginationOptions } from '@cyl-app/dto';
+import { Pagination } from '@cyl-app/dto';
 import { CustomError } from '@shared/errors';
 
-interface IPagination<T> {
-  pagination: Pagination;
-  dataSorted: T[];
+interface IPaginationParams {
+  total: number;
+  page: number;
+  itemsPerPage: number;
 }
 
-export default function pagination<T>(
-  {
-    limit = '50',
-    order = 'asc',
-    page = '1',
-    sort,
-    start = '1',
-    itemsPerPage = '5',
-  }: PaginationOptions,
-  data: T[]
-): IPagination<T> {
-  const total_pages = Math.ceil(data.length / Number(itemsPerPage)) || 1;
+interface IPagination {
+  pagination: Pagination;
+}
 
-  if (Number(page) > total_pages) {
+export default function pagination({
+  total,
+  page,
+  itemsPerPage,
+}: IPaginationParams): IPagination {
+  const total_pages = Math.ceil(total / itemsPerPage);
+
+  if (total > 0 && page > total_pages) {
     throw new CustomError(`Página ${page} não encontrada`, 400);
   }
 
-  const totalItems = Number(limit) < data.length ? Number(limit) : data.length;
-  const last =
-    Number(page) * Number(itemsPerPage) > totalItems
-      ? totalItems
-      : Number(page) * Number(itemsPerPage) < Number(start)
-        ? Number(start)
-        : Number(page) * Number(itemsPerPage);
-
-  const dataPaginated = data.slice(Number(start) - 1, last);
-
-  const dataSorted = sort ? dataPaginated.map(d => d) : dataPaginated;
-
   return {
     pagination: {
-      page: Number(page),
-      first: Number(start),
-      last,
-      itemsPerPage: Number(itemsPerPage),
-      totalItems,
-      totalPages: total_pages,
-      hasNext: Number(page) < total_pages,
-      hasPrev: Number(page) > 1,
+      page: total > 0 ? page : null,
+      itemsPerPage: total > 0 ? itemsPerPage : null,
+      totalPages: total_pages > 0 ? total_pages : null,
+      totalItems: total > 0 ? total : null,
+      hasNext: page < total_pages,
+      hasPrev: page > 1,
     },
-    dataSorted,
   };
 }

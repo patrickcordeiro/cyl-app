@@ -1,10 +1,8 @@
 export type Pagination = {
-  page: number;
-  first: number;
-  last: number;
-  itemsPerPage: number;
-  totalItems: number;
-  totalPages: number;
+  page: number | null;
+  itemsPerPage: number | null;
+  totalItems: number | null;
+  totalPages: number | null;
   hasNext: boolean;
   hasPrev: boolean;
 };

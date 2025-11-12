@@ -10,7 +10,7 @@ import {
 } from '@cyl-app/dto';
 import { IncomeEntity } from '@entities/Income';
 import { IncomeModel } from '@infra/data/models';
-import { getPagination } from '@shared/utils';
+import { getPagination, getValidDate } from '@shared/utils';
 import { CustomError } from '@shared/errors';
 
 @injectable()
@@ -21,50 +21,45 @@ export default class IncomeRepository
   async search(
     queryOptions: SearchOptionsDto
   ): Promise<SearchResponse<IncomeSearchDto>> {
-    const { itemsPerPage, limit, order, page, start, sort, ...othersFilters } =
-      queryOptions;
+    const { itemsPerPage, order, sort, page, search, status } = queryOptions;
 
     const connection = this.getConnection();
 
-    const incomes = await connection
+    const firstIndex = (page - 1) * itemsPerPage;
+
+    const query = connection
       .createQueryBuilder()
-      .select('income')
-      .from(IncomeModel, 'income')
-      // .where(othersFilters)
-      // .orderBy(
-      //   `income.${sort}`,
-      //   order && order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'
-      // )
-      // .skip(Number(start))
-      // .take(Number(limit))
-      .getManyAndCount();
+      .select('incomes')
+      .from(IncomeModel, 'incomes')
+      .skip(firstIndex)
+      .take(itemsPerPage);
 
-    const [data] = incomes;
+    if (status !== 'all') {
+      query.andWhere('incomes.active = :status', {
+        status: Boolean(status === 'active'),
+      });
+    }
 
-    const { pagination } = getPagination(
-      { itemsPerPage, page, limit, order, start, sort },
-      data
-    );
+    if (search) {
+      query.andWhere('incomes.name ILIKE :search', { search: `%${search}%` });
+    }
 
-    const response: SearchResponse<IncomeSearchDto> = {
-      data: data.map(item => {
-        const income = new IncomeEntity({
-          id: item.id,
-          name: item.name,
-          active: item.active,
-          expectedAmount: item['expectedAmount'],
-          expectedDate: item['expectedDate'],
-          receiptAmount: item['receiptAmount'],
-          receiptDate: item['receiptDate'],
-          createdAt: item['createdAt'],
-          updatedAt: item['updatedAt'],
-        });
-        return income.toJSON();
-      }),
+    if (sort) {
+      query.orderBy(`incomes.${sort}`, order === 'ASC' ? 'ASC' : 'DESC');
+    }
+
+    const [data, total] = await query.getManyAndCount();
+
+    const { pagination } = getPagination({
+      total,
+      itemsPerPage,
+      page,
+    });
+
+    return {
       pagination,
-    };
-
-    return response;
+      data: data.map(item => new IncomeEntity(item).toJSON()),
+    } as SearchResponse<IncomeSearchDto>;
   }
 
   async getById(id: string): Promise<IncomeEntity | undefined> {
@@ -72,31 +67,16 @@ export default class IncomeRepository
 
     const income = await connection
       .createQueryBuilder()
-      .select('income')
-      .from(IncomeModel, 'income')
-      .where('income.id = :id', { id })
-      // .andWhere('income.active = :active', { active: true })
-      // .orderBy(
-      //   `income.${sort}`,
-      //   order && order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'
-      // )
-      // .skip(Number(start))
-      // .take(Number(limit))
+      .select('incomes')
+      .from(IncomeModel, 'incomes')
+      .where('incomes.id = :id', { id })
       .getOne();
 
-    const response = income
-      ? new IncomeEntity({
-          id: income.id,
-          name: income.name,
-          active: income.active,
-          expectedAmount: income['expectedAmount'],
-          expectedDate: income['expectedDate'],
-          receiptAmount: income['receiptAmount'],
-          receiptDate: income['receiptDate'],
-          createdAt: income['createdAt'],
-          updatedAt: income['updatedAt'],
-        })
-      : undefined;
+    if (!income) {
+      throw new CustomError('Income not found', 404);
+    }
+
+    const response = income ? new IncomeEntity(income) : undefined;
 
     return response;
   }
@@ -106,6 +86,8 @@ export default class IncomeRepository
 
     const newIncome = new IncomeEntity({
       ...data,
+      expectedDate: getValidDate(data.expectedDate),
+      receiptDate: data.receiptDate ? getValidDate(data.receiptDate) : null,
       updatedAt: null,
     });
 
@@ -116,7 +98,19 @@ export default class IncomeRepository
       .values(newIncome.toJSON())
       .execute();
 
-    return newIncome;
+    const createdIncomeId = createdIncome?.identifiers[0]?.id;
+
+    if (!createdIncomeId) {
+      throw new CustomError('Error creating income', 400);
+    }
+
+    const incomeCreated = await this.getById(createdIncomeId);
+
+    if (!incomeCreated) {
+      throw new CustomError('Error creating income', 400);
+    }
+
+    return incomeCreated;
   }
 
   async update(id: string, data: IncomeUpdateDto): Promise<IncomeEntity> {
@@ -128,7 +122,15 @@ export default class IncomeRepository
       throw new CustomError('Income not found', 404);
     }
 
-    existingIncome.update(data);
+    existingIncome.update({
+      ...data,
+      expectedDate: data.expectedDate
+        ? getValidDate(data.expectedDate)
+        : existingIncome.getExpectedDate(),
+      receiptDate: data.receiptDate
+        ? getValidDate(data.receiptDate)
+        : existingIncome.getReceiptDate(),
+    });
 
     await connection
       .createQueryBuilder()

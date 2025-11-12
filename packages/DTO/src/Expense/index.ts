@@ -1,1 +1,1 @@
-export * from './ExpenseDto';
+export * from './ExpenseDto.js';

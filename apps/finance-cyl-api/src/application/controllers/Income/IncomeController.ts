@@ -1,10 +1,14 @@
-import { IIncomeController } from '@interfaces/controllers';
-import { IIncomeService } from '@interfaces/services';
+import { z } from 'zod';
+import { injectable } from 'inversify';
+import { Request } from 'express';
+
+import { IncomeCreateSchema, IncomeUpdateSchema } from '@cyl-app/dto';
+
 import { CustomError } from '@shared/errors';
 import { getRequestInfo, validateSchema } from '@shared/utils';
-import { Request } from 'express';
-import { injectable } from 'inversify';
-import { z } from 'zod';
+
+import { IIncomeController } from '@interfaces/controllers';
+import { IIncomeService } from '@interfaces/services';
 
 const idSchema = z.object({
   id: z.uuidv4(),
@@ -37,7 +41,7 @@ export default class IncomeController implements IIncomeController {
   }
 
   async create(req: Request) {
-    const { body } = getRequestInfo(req);
+    const { body } = getRequestInfo(req, IncomeCreateSchema);
 
     const income = await this.service.create(body);
 
@@ -45,7 +49,7 @@ export default class IncomeController implements IIncomeController {
   }
 
   async update(req: Request) {
-    const { params, body } = getRequestInfo(req);
+    const { params, body } = getRequestInfo(req, IncomeUpdateSchema);
 
     if (!params?.id) {
       new CustomError('Id income missing', 400);

@@ -2,8 +2,10 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { readFileSync } from 'fs';
 import env from '@infra/config/env';
 import { Logger } from '@infra/logging';
+import { CreateTableIncome1762785242565 } from './migrations/1762785242565-CreateTableIncome';
+import { IncomeModel } from './models';
 
-const dataSourceFinanceOptions: DataSourceOptions = {
+export const dataSourceFinanceOptions: DataSourceOptions = {
   type: 'postgres',
   host: env.DB_HOST,
   port: env.DB_PORT,
@@ -12,8 +14,8 @@ const dataSourceFinanceOptions: DataSourceOptions = {
   database: env.DB_NAME,
   synchronize: false,
   logging: env.NODE_ENV === 'development' ? true : false,
-  entities: [],
-  migrations: [],
+  entities: [IncomeModel],
+  migrations: [CreateTableIncome1762785242565],
   ssl: env.DB_CA ? { ca: readFileSync(env.DB_CA) } : false,
 };
 

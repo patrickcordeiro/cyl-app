@@ -1,2 +1,2 @@
-export * from './ControllerBase';
-export * from './IncomeController';
+export * from './ControllerBase.js';
+export * from './IncomeController.js';

@@ -159,6 +159,7 @@ export abstract class EntityBase {
         settersDictionary[key as keyof T].bind(this)(value);
       }
     });
+
     this.setUpdated();
   }
 

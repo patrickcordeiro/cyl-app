@@ -8,10 +8,10 @@ export default class Income {
   @Column({ type: 'varchar' })
   name!: string;
 
-  @Column({ type: 'date', name: 'expected_date' })
+  @Column({ type: 'timestamptz', name: 'expected_date' })
   expectedDate!: Date;
 
-  @Column({ type: 'date', name: 'receipt_date', nullable: true })
+  @Column({ type: 'timestamptz', name: 'receipt_date', nullable: true })
   receiptDate!: Date | null;
 
   @Column({ type: 'decimal', name: 'expected_amount', precision: 14, scale: 4 })
@@ -27,13 +27,13 @@ export default class Income {
   receiptAmount!: number | null;
 
   @Column({
-    type: 'datetime',
+    type: 'timestamptz',
     name: 'created_at',
   })
   createdAt!: Date;
 
   @Column({
-    type: 'datetime',
+    type: 'timestamptz',
     name: 'updated_at',
   })
   updatedAt!: Date | null;

@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { RequestContextUserSchema } from './RequestContextUserDto';
-import { RequestContextRealmSchema } from './RequestContextRealmDto';
-import { RequestContextLanguageSchema } from './RequestContextLanguageDto';
+import { RequestContextUserSchema } from './RequestContextUserDto.js';
+import { RequestContextRealmSchema } from './RequestContextRealmDto.js';
+import { RequestContextLanguageSchema } from './RequestContextLanguageDto.js';
 
 export const RequestContextSchema = z.object({
   user: RequestContextUserSchema,

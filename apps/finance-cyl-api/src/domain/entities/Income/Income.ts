@@ -1,6 +1,6 @@
 import { IncomeDto } from '@cyl-app/dto';
 import { EntityBase, IEntityBase } from 'src/domain/entities/EntityBase';
-import { validateObject } from '@shared/utils';
+import { getValidDate, parseDecimalValue, validateObject } from '@shared/utils';
 
 export interface IIncome extends IEntityBase {
   id?: string;
@@ -32,10 +32,14 @@ export default class Income extends EntityBase {
   constructor(props: IIncome) {
     super(props);
     this.name = props.name;
-    this.expectedDate = props.expectedDate;
-    this.receiptDate = props.receiptDate ?? null;
-    this.expectedAmount = props.expectedAmount;
-    this.receiptAmount = props.receiptAmount ?? null;
+    this.expectedDate = getValidDate(props.expectedDate);
+    this.receiptDate = props.receiptDate
+      ? getValidDate(props.receiptDate)
+      : null;
+    this.expectedAmount = parseDecimalValue(props.expectedAmount);
+    this.receiptAmount = props.receiptAmount
+      ? parseDecimalValue(props.receiptAmount)
+      : null;
   }
 
   public validate(): void {
@@ -82,19 +86,19 @@ export default class Income extends EntityBase {
   }
 
   public setExpectedDate(expectedDate: Date): void {
-    this.setDate(expectedDate, 'expectedDate');
+    this.setDate(getValidDate(expectedDate), 'expectedDate');
   }
 
   public setReceiptDate(receiptDate: Date | null): void {
-    this.setNullableDate(receiptDate, 'receiptDate');
+    this.setNullableDate(getValidDate(receiptDate), 'receiptDate');
   }
 
   public setExpectedAmount(expectedAmount: number): void {
-    this.setNumber(expectedAmount, 'expectedAmount');
+    this.setNumber(parseDecimalValue(expectedAmount), 'expectedAmount');
   }
 
   public setReceiptAmount(receiptAmount: number | null): void {
-    this.setNullableNumber(receiptAmount, 'receiptAmount');
+    this.setNullableNumber(parseDecimalValue(receiptAmount), 'receiptAmount');
   }
 
   /* #endregion */
