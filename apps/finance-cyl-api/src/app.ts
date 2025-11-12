@@ -10,6 +10,8 @@ import {
 } from '@application/middlewares';
 import env from '@infra/config/env';
 import { incomeRouter } from '@application/controllers/Income/routes';
+import { i18nService } from '@shared/i18n';
+import i18n from '@infra/i18n';
 
 function ensureHelmet(h: typeof helmet) {
   if (env.NODE_ENV === 'development') {
@@ -48,5 +50,7 @@ app.use(basePath, router);
 app.use(errorMiddleware());
 
 app.use(custom404Middleware);
+
+i18nService.init(i18n);
 
 export default app;

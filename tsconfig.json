@@ -8,6 +8,9 @@
     },
     {
       "path": "./packages/DTO"
+    },
+    {
+      "path": "./packages/i18n"
     }
   ]
 }

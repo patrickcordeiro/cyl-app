@@ -5,7 +5,7 @@
   "scripts": {
     "build": "npm run build:packages && nx run-many -t build -p @cyl-app/finance-cyl-api",
     "build:finance-cyl-api": "npm run build:packages && nx build @cyl-app/finance-cyl-api -skip-nx-cache",
-    "build:packages": "nx run-many -t build -p @cyl-app/dto --skip-nx-cache",
+    "build:packages": "nx run-many -t build -p @cyl-app/dto @cyl-app/i18n --skip-nx-cache",
     "dev": "npm run build:packages && nx run-many -t dev -p @cyl-app/finance-cyl-api --output-style=stream",
     "dev:finance-cyl-api": "npm run build:packages && nx dev @cyl-app/finance-cyl-api --output-style=stream",
     "migrations:create": "nx migrations:create @cyl-app/finance-cyl-api",
