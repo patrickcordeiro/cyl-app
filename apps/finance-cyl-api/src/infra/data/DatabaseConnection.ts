@@ -3,7 +3,8 @@ import { readFileSync } from 'fs';
 import env from '@infra/config/env';
 import { Logger } from '@infra/logging';
 import { CreateTableIncome1762785242565 } from './migrations/1762785242565-CreateTableIncome';
-import { IncomeModel } from './models';
+import { ExpenseModel, IncomeModel } from './models';
+import { CreateTableExpense1763028688902 } from './migrations/1763028688902-CreateTableExpense';
 
 export const dataSourceFinanceOptions: DataSourceOptions = {
   type: 'postgres',
@@ -14,8 +15,8 @@ export const dataSourceFinanceOptions: DataSourceOptions = {
   database: env.DB_NAME,
   synchronize: false,
   logging: env.NODE_ENV === 'development' ? true : false,
-  entities: [IncomeModel],
-  migrations: [CreateTableIncome1762785242565],
+  entities: [IncomeModel, ExpenseModel],
+  migrations: [CreateTableIncome1762785242565, CreateTableExpense1763028688902],
   ssl: env.DB_CA ? { ca: readFileSync(env.DB_CA) } : false,
 };
 

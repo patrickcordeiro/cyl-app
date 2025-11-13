@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const ExpenseSchema = z.object({
+export const ExpenseSearchSchema = z.object({
   id: z.string(),
   name: z.string(),
   dueDate: z.date(),
@@ -12,4 +12,4 @@ export const ExpenseSchema = z.object({
   updatedAt: z.date().nullable(),
 });
 
-export type ExpenseDto = z.infer<typeof ExpenseSchema>;
+export type ExpenseSearchDto = z.infer<typeof ExpenseSearchSchema>;

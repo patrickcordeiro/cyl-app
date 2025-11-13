@@ -1,14 +1,14 @@
 import { ExpenseDto } from '@cyl-app/dto';
 import { EntityBase, IEntityBase } from 'src/domain/entities/EntityBase';
-import { validateObject } from '@shared/utils';
+import { getValidDate, parseDecimalValue, validateObject } from '@shared/utils';
 
 export interface IExpense extends IEntityBase {
-  id: string;
+  id?: string;
   name: string;
   dueDate: Date;
   paymentDate: Date | null;
   expectedAmount: number;
-  payAmmount: number | null;
+  payAmount: number | null;
   createdAt?: Date;
   active?: boolean;
 }
@@ -18,7 +18,7 @@ export interface IExpenseUpdate {
   dueDate?: Date;
   paymentDate?: Date | null;
   expectedAmount?: number;
-  payAmmount?: number | null;
+  payAmount?: number | null;
   active?: boolean;
 }
 
@@ -27,15 +27,19 @@ export default class Expense extends EntityBase {
   protected dueDate: Date;
   protected paymentDate: Date | null;
   protected expectedAmount: number;
-  protected payAmmount: number | null;
+  protected payAmount: number | null;
 
   constructor(props: IExpense) {
     super(props);
     this.name = props.name;
-    this.dueDate = props.dueDate;
-    this.paymentDate = props.paymentDate ?? null;
-    this.expectedAmount = props.expectedAmount;
-    this.payAmmount = props.payAmmount ?? null;
+    this.dueDate = getValidDate(props.dueDate);
+    this.paymentDate = props.paymentDate
+      ? getValidDate(props.paymentDate)
+      : null;
+    this.expectedAmount = parseDecimalValue(props.expectedAmount);
+    this.payAmount = props.payAmount
+      ? parseDecimalValue(props.payAmount)
+      : null;
   }
 
   public validate(): void {
@@ -45,7 +49,7 @@ export default class Expense extends EntityBase {
       'dueDate',
       'paymentDate',
       'expectedAmount',
-      'payAmmount',
+      'payAmount',
       'createdAt',
       'active',
     ]);
@@ -61,7 +65,7 @@ export default class Expense extends EntityBase {
     return this.dueDate;
   }
 
-  public getpaymentDate(): Date | null {
+  public getPaymentDate(): Date | null {
     return this.paymentDate;
   }
 
@@ -70,7 +74,7 @@ export default class Expense extends EntityBase {
   }
 
   public getPayAmount(): number | null {
-    return this.payAmmount;
+    return this.payAmount;
   }
 
   /* #endregion */
@@ -82,19 +86,19 @@ export default class Expense extends EntityBase {
   }
 
   public setDueDate(dueDate: Date): void {
-    this.setDate(dueDate, 'dueDate');
+    this.setDate(getValidDate(dueDate), 'dueDate');
   }
 
   public setpaymentDate(paymentDate: Date | null): void {
-    this.setNullableDate(paymentDate, 'paymentDate');
+    this.setNullableDate(getValidDate(paymentDate), 'paymentDate');
   }
 
   public setExpectedAmount(expectedAmount: number): void {
-    this.setNumber(expectedAmount, 'expectedAmount');
+    this.setNumber(parseDecimalValue(expectedAmount), 'expectedAmount');
   }
 
-  public setPayAmount(payAmmount: number | null): void {
-    this.setNullableNumber(payAmmount, 'payAmmount');
+  public setPayAmount(payAmount: number | null): void {
+    this.setNullableNumber(parseDecimalValue(payAmount), 'payAmount');
   }
 
   /* #endregion */
@@ -105,7 +109,7 @@ export default class Expense extends EntityBase {
       dueDate: this.setDueDate,
       paymentDate: this.setpaymentDate,
       expectedAmount: this.setExpectedAmount,
-      payAmmount: this.setPayAmount,
+      payAmount: this.setPayAmount,
       active: this.setActive,
     };
 
@@ -119,7 +123,7 @@ export default class Expense extends EntityBase {
       dueDate: this.dueDate,
       paymentDate: this.paymentDate,
       expectedAmount: this.expectedAmount,
-      payAmmount: this.payAmmount,
+      payAmount: this.payAmount,
       active: this.active,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
