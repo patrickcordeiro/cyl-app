@@ -10,8 +10,13 @@ import {
 } from '@cyl-app/dto';
 import { ExpenseEntity } from '@entities/Expense';
 import { ExpenseModel } from '@infra/data/models';
-import { getPagination, getValidDate } from '@shared/utils';
+import {
+  getFirstAndLastDateByMonth,
+  getPagination,
+  getValidDate,
+} from '@shared/utils';
 import { CustomError } from '@shared/errors';
+import Expense from '@entities/Expense/Expense';
 
 @injectable()
 export default class ExpenseRepository
@@ -60,6 +65,31 @@ export default class ExpenseRepository
       pagination,
       data: data.map(item => new ExpenseEntity(item).toJSON()),
     } as SearchResponse<ExpenseSearchDto>;
+  }
+
+  async getAllByMonth(month: string, year: number): Promise<Expense[]> {
+    const connection = this.getConnection();
+
+    const { firstDateMonth, lastDateMonth } = getFirstAndLastDateByMonth(
+      month,
+      year
+    );
+
+    const query = connection
+      .createQueryBuilder()
+      .select('expenses')
+      .from(ExpenseModel, 'expenses')
+      .andWhere('expenses.due_date BETWEEN :start AND :end', {
+        start: firstDateMonth,
+        end: lastDateMonth,
+      })
+      .orderBy(`expenses.due_date`, 'ASC');
+
+    const data = await query.getMany();
+
+    const expensesByMonth = data.map(e => new Expense(e));
+
+    return expensesByMonth;
   }
 
   async getById(id: string): Promise<ExpenseEntity | undefined> {

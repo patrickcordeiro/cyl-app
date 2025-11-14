@@ -1,1 +1,1 @@
-export { default as IExpenseService } from './ExpenseService';
+export { default as IExpenseService } from './IExpenseService';
