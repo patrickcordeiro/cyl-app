@@ -13,6 +13,7 @@ import { incomeRouter } from '@application/controllers/Income/routes';
 import { i18nService } from '@shared/i18n';
 import i18n from '@infra/i18n';
 import { expenseRouter } from '@application/controllers/Expense/routes';
+import { budgetsRouter } from '@application/controllers/Budget/routes';
 
 function ensureHelmet(h: typeof helmet) {
   if (env.NODE_ENV === 'development') {
@@ -46,9 +47,11 @@ app.get('/health', (req, res) => {
 
 const { basePath: basePathIncome, router: routerIncome } = incomeRouter;
 const { basePath: basePathExpense, router: routerExpense } = expenseRouter;
+const { basePath: basePathBudget, router: routerBudget } = budgetsRouter;
 
 app.use(basePathIncome, routerIncome);
 app.use(basePathExpense, routerExpense);
+app.use(basePathBudget, routerBudget);
 
 app.use(errorMiddleware());
 

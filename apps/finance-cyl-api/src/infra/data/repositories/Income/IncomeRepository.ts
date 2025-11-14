@@ -10,8 +10,13 @@ import {
 } from '@cyl-app/dto';
 import { IncomeEntity } from '@entities/Income';
 import { IncomeModel } from '@infra/data/models';
-import { getPagination, getValidDate } from '@shared/utils';
+import {
+  getFirstAndLastDateByMonth,
+  getPagination,
+  getValidDate,
+} from '@shared/utils';
 import { CustomError } from '@shared/errors';
+import Income from '@entities/Income/Income';
 
 @injectable()
 export default class IncomeRepository
@@ -60,6 +65,31 @@ export default class IncomeRepository
       pagination,
       data: data.map(item => new IncomeEntity(item).toJSON()),
     } as SearchResponse<IncomeSearchDto>;
+  }
+
+  async getAllByMonth(month: string, year: number): Promise<Income[]> {
+    const connection = this.getConnection();
+
+    const { firstDateMonth, lastDateMonth } = getFirstAndLastDateByMonth(
+      month,
+      year
+    );
+
+    const query = connection
+      .createQueryBuilder()
+      .select('incomes')
+      .from(IncomeModel, 'incomes')
+      .andWhere('incomes.expected_date BETWEEN :start AND :end', {
+        start: firstDateMonth,
+        end: lastDateMonth,
+      })
+      .orderBy(`incomes.expected_date`, 'ASC');
+
+    const data = await query.getMany();
+
+    const incomesByMonth = data.map(i => new Income(i));
+
+    return incomesByMonth;
   }
 
   async getById(id: string): Promise<IncomeEntity | undefined> {
