@@ -49,6 +49,22 @@ export default class Budget {
     return this.expenses;
   }
 
+  public getIncomesAmountTotal(): number {
+    return this.getIncomes().reduce((a, b) => {
+      return a + b.getExpectedAmount();
+    }, 0);
+  }
+
+  public getExpensesAmountTotal(): number {
+    return this.getExpenses().reduce((a, b) => {
+      return a + b.getExpectedAmount();
+    }, 0);
+  }
+
+  public getBalanceMonth(): number {
+    return this.getIncomesAmountTotal() - this.getExpensesAmountTotal();
+  }
+
   /* #endregion */
 
   /* #region Setters */
@@ -56,6 +72,8 @@ export default class Budget {
   public setYear(year: number): void {
     this.year = year;
   }
+
+  /* #endregion */
 
   public addIncome(income: Income): Income[] {
     const incomeAlreadyExists = this.getIncomes().find(i => i.isSame(income));
@@ -103,12 +121,13 @@ export default class Budget {
     return this.getExpenses();
   }
 
-  /* #endregion */
-
   public toJSON(): BudgetDto {
     return {
       month: this.getMonth(),
       year: this.getYear(),
+      incomesAmountTotal: this.getIncomesAmountTotal(),
+      expensesAmountTotal: this.getExpensesAmountTotal(),
+      balanceMonth: this.getBalanceMonth(),
       incomes: this.getIncomes().map(i => i.toJSON()),
       expenses: this.getExpenses().map(e => e.toJSON()),
     };

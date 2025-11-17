@@ -81,23 +81,23 @@ export default class Expense extends EntityBase {
 
   /* #region Setters */
 
-  public setName(name: string): void {
+  private setName(name: string): void {
     this.setString(name, 'name');
   }
 
-  public setDueDate(dueDate: Date): void {
+  private setDueDate(dueDate: Date): void {
     this.setDate(getValidDate(dueDate), 'dueDate');
   }
 
-  public setpaymentDate(paymentDate: Date | null): void {
+  private setpaymentDate(paymentDate: Date | null): void {
     this.setNullableDate(getValidDate(paymentDate), 'paymentDate');
   }
 
-  public setExpectedAmount(expectedAmount: number): void {
+  private setExpectedAmount(expectedAmount: number): void {
     this.setNumber(parseDecimalValue(expectedAmount), 'expectedAmount');
   }
 
-  public setPayAmount(payAmount: number | null): void {
+  private setPayAmount(payAmount: number | null): void {
     this.setNullableNumber(parseDecimalValue(payAmount), 'payAmount');
   }
 
