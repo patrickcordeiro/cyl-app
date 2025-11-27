@@ -3,6 +3,8 @@
 import { useRef } from 'react';
 
 import { ListTodo } from 'lucide-react';
+import { projects } from '@/constants/projects';
+import ProjectCard from '@/components/ProjectCard';
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -19,7 +21,16 @@ export default function Home() {
       </div>
 
       <main className="flex max-h-96 w-8/12 flex-col gap-3 py-3" ref={containerRef}>
-        <div>teste</div>
+        {projects.map((project) => {
+          return (
+            <ProjectCard
+              key={project.name}
+              name={project.name}
+              link={project.link}
+              preview={project.preview}
+            />
+          );
+        })}
       </main>
     </div>
   );

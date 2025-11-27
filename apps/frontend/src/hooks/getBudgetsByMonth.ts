@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { BudgetDto, SearchResponse } from '@cyl-app/dto';
+import { BudgetDto } from '@cyl-app/dto';
 import { budgetService } from '@/services/budgetService';
 
 interface UseSearchBudgetsProps {
@@ -8,7 +8,7 @@ interface UseSearchBudgetsProps {
 }
 
 export function useSearchBudgets({ month, year }: UseSearchBudgetsProps) {
-  return useQuery<SearchResponse<BudgetDto>>({
+  return useQuery<BudgetDto>({
     queryKey: ['budgets', { month, year }],
     queryFn: () =>
       budgetService.search({
