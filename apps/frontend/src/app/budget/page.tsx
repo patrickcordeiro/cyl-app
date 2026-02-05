@@ -74,54 +74,26 @@ export default function BudgetPage() {
   }
 
   return (
-    <div className="flex w-full h-screen border-2">
-      <div className="flex flex-col items-center w-full gap-3 border-2 border-red-500 border-solid">
+    <div className="flex h-screen w-full border-2">
+      <div className="flex w-full flex-col items-center gap-3 border-2 border-solid border-red-500">
         <h1 className="text-4xl font-bold">Orçamento Mensal</h1>
-        <InputMonthYear></InputMonthYear>
         <div className="flex items-center gap-3">
-          <span>Mês:</span>
-
-          <select
-            name="month"
-            id="month"
-            onChange={(e) => setMonth(e.currentTarget.value)}
-            defaultValue={month}
-          >
-            <option value="" disabled>
-              Selecione o mês
-            </option>
-            {months.map((m) => {
-              return (
-                <option value={m} className="capitalize" key={m}>
-                  {m}
-                </option>
-              );
-            })}
-          </select>
-
-          <span>Ano:</span>
-          <select
-            name="year"
-            id="year"
-            onChange={(e) => setYear(Number(e.currentTarget.value))}
-            defaultValue={year}
-          >
-            <option value={0} disabled>
-              Selecione o Ano
-            </option>
-            <option value={2025}>{2025}</option>
-            <option value={2026}>{2026}</option>
-          </select>
+          <InputMonthYear
+            actualMonth={month}
+            actualYear={year}
+            setMonth={setMonth}
+            setYear={setYear}
+          />
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="p-5 rounded-md shadow-md">
+          <div className="rounded-md p-5 shadow-md">
             Receitas: {formatCurrency(budgetList?.incomesAmountTotal)}
           </div>
-          <div className="p-5 rounded-md shadow-md">
+          <div className="rounded-md p-5 shadow-md">
             Despesas: {formatCurrency(budgetList?.expensesAmountTotal)}
           </div>
-          <div className="p-5 rounded-md shadow-md">
+          <div className="rounded-md p-5 shadow-md">
             Saldo:{' '}
             <span
               className={
@@ -136,7 +108,7 @@ export default function BudgetPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex flex-col p-5 rounded-md shadow-md">
+          <div className="flex flex-col rounded-md p-5 shadow-md">
             <h2>Receitas</h2>
 
             {!budgetList.incomes.length && <div>Nenhuma receita cadastrada para o mês</div>}
@@ -157,7 +129,7 @@ export default function BudgetPage() {
             })}
           </div>
 
-          <div className="flex flex-col p-5 rounded-md shadow-md">
+          <div className="flex flex-col rounded-md p-5 shadow-md">
             <h2>Despesas</h2>
 
             {!budgetList?.expenses.length && <div>Nenhuma despesa cadastrada para o mês</div>}

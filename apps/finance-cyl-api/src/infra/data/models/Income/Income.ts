@@ -1,10 +1,8 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
+import { BaseModel } from '../ModelBase';
 
 @Entity('incomes')
-export default class Income {
-  @PrimaryColumn('uuid')
-  id!: string;
-
+export default class Income extends BaseModel {
   @Column({ type: 'varchar' })
   name!: string;
 
@@ -25,19 +23,4 @@ export default class Income {
     nullable: true,
   })
   receiptAmount!: number | null;
-
-  @Column({
-    type: 'timestamptz',
-    name: 'created_at',
-  })
-  createdAt!: Date;
-
-  @Column({
-    type: 'timestamptz',
-    name: 'updated_at',
-  })
-  updatedAt!: Date | null;
-
-  @Column({ type: 'boolean', default: true })
-  active!: boolean;
 }

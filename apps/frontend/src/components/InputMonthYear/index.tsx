@@ -3,14 +3,26 @@
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
-export default function InputMonthYear() {
+interface InputMonthYearParams {
+  actualMonth: string;
+  actualYear: number;
+  setMonth: (value: string) => void;
+  setYear: (value: number) => void;
+}
+
+export default function InputMonthYear({
+  actualMonth,
+  actualYear,
+  setMonth,
+  setYear,
+}: InputMonthYearParams) {
   return (
-    <div className="grid grid-cols-3 gap-4">
-      <div className="flex flex-col gap-3">
+    <div className="flex items-center gap-5">
+      <div className="flex items-center gap-3">
         <Label htmlFor="month">Mês</Label>
 
-        <Select>
-          <SelectTrigger id="month" aria-label="Mês" className="w-full">
+        <Select value={actualMonth} onValueChange={setMonth}>
+          <SelectTrigger id="month" aria-label="Mês" className="w-full bg-white">
             <SelectValue placeholder="Mês" />
           </SelectTrigger>
           <SelectContent>
@@ -29,18 +41,23 @@ export default function InputMonthYear() {
           </SelectContent>
         </Select>
       </div>
-      <div className="flex flex-col gap-3">
+
+      <div className="flex items-center gap-3">
         <Label htmlFor="year">Ano</Label>
-        <Select>
+
+        <Select value={String(actualYear)} onValueChange={(v) => setYear(Number(v))}>
           <SelectTrigger id="year" aria-label="Ano" className="w-full">
             <SelectValue placeholder="Ano" />
           </SelectTrigger>
           <SelectContent>
-            {Array.from({ length: 10 }, (_, i) => (
-              <SelectItem key={i} value={`${new Date().getFullYear() + i}`}>
-                {new Date().getFullYear() + i}
-              </SelectItem>
-            ))}
+            {Array.from({ length: 10 }, (_, i) => {
+              const y = new Date().getFullYear() + i;
+              return (
+                <SelectItem key={y} value={String(y)}>
+                  {y}
+                </SelectItem>
+              );
+            })}
           </SelectContent>
         </Select>
       </div>
